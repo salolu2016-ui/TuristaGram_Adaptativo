@@ -45,43 +45,103 @@ let lugares: [LugarTuristico] = [
 ]
 
 import SwiftUI
+import PhotosUI
+import MapKit
 
 /// Vista principal de la aplicación
 struct ContentView: View {
     
-    // Tomamos el primer lugar del arreglo
-    let lugar = lugares[0]
+    // Estado para manejar selección de imagen de galería
+    @State private var selectedItem: PhotosPickerItem?
     
     var body: some View {
         
-        /// TabView permite navegar entre vistas con swipe (deslizamiento)
-        TabView {
+        VStack {
             
-            /// Recorremos cada lugar turístico del arreglo
-            ForEach(lugares) { lugar in
+            // HEADER PERSONALIZADO
+            ZStack {
                 
-                VStack {
-                    
-                    // Imagen del lugar turístico
-                    Image(lugar.imagen)
-                        .resizable()
-                        .scaledToFit()
-                    
-                    // Nombre del lugar
-                    Text(lugar.nombre)
-                        .font(.title)
-                        .bold()
-                    
-                    // País del lugar
-                    Text(lugar.pais)
-                        .font(.subheadline)
-                        .foregroundColor(.gray)
-                }
-                .padding()
+                // Fondo degradado (estilo cielo)
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.blue, Color.cyan]),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 120)
+                .cornerRadius(15)
+                
+                // Ícono decorativo (avión)
+                Image(systemName: "airplane")
+                    .font(.largeTitle)
+                    .foregroundColor(.white)
+                    .offset(x: 80, y: -20)
+                
+                // Título de la app
+                Text("TuristaGram")
+                    .font(.largeTitle)
+                    .bold()
+                    .foregroundColor(.white)
             }
+            .padding()
+            
+            /// Swipe entre lugares (tipo Instagram)
+            TabView {
+                
+                /// Recorremos cada lugar turístico
+                ForEach(lugares) { lugar in
+                    
+                    VStack {
+                        
+                        // Imagen del lugar
+                        Image(lugar.imagen)
+                            .resizable()
+                            .scaledToFit()
+                        
+                        // Nombre
+                        Text(lugar.nombre)
+                            .font(.title)
+                            .bold()
+                        
+                        // País
+                        Text(lugar.pais)
+                            .foregroundColor(.gray)
+                        
+                        // BOTÓN GALERÍA
+                        PhotosPicker(selection: $selectedItem, matching: .images) {
+                            Label("Abrir galería", systemImage: "photo")
+                        }
+                        .padding()
+                        
+                        // BOTÓN MAPA
+                        Button(action: {
+                            abrirMapa(lat: lugar.latitud, lon: lugar.longitud)
+                        }) {
+                            Label("Ver en mapa", systemImage: "map")
+                        }
+                        .padding()
+                    }
+                    .padding()
+                }
+            }
+            .tabViewStyle(PageTabViewStyle()) // Activa swipe
         }
-        .tabViewStyle(PageTabViewStyle()) // Activa el swipe tipo páginas
-    }}
+    }
+}
+
+/// Función para abrir Apple Maps (forma correcta y compatible)
+func abrirMapa(lat: Double, lon: Double) {
+    
+    // Coordenadas del lugar
+    let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+    
+    // Crear directamente el mapItem con placemark
+    let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+    
+    mapItem.name = "Ubicación turística"
+    
+    // Abrir en Apple Maps
+    mapItem.openInMaps()
+}
 
 /// Preview para el Canvas
 #Preview {
