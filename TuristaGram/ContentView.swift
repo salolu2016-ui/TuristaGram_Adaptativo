@@ -53,26 +53,35 @@ struct ContentView: View {
     let lugar = lugares[0]
     
     var body: some View {
-        VStack {
+        
+        /// TabView permite navegar entre vistas con swipe (deslizamiento)
+        TabView {
             
-            // Imagen del lugar turístico
-            Image(lugar.imagen)
-                .resizable()                 // Permite redimensionar la imagen
-                .scaledToFit()               // Ajusta la imagen sin deformarla
-            
-            // Nombre del lugar
-            Text(lugar.nombre)
-                .font(.title)
-                .bold()
-            
-            // País del lugar
-            Text(lugar.pais)
-                .font(.subheadline)
-                .foregroundColor(.gray)
+            /// Recorremos cada lugar turístico del arreglo
+            ForEach(lugares) { lugar in
+                
+                VStack {
+                    
+                    // Imagen del lugar turístico
+                    Image(lugar.imagen)
+                        .resizable()
+                        .scaledToFit()
+                    
+                    // Nombre del lugar
+                    Text(lugar.nombre)
+                        .font(.title)
+                        .bold()
+                    
+                    // País del lugar
+                    Text(lugar.pais)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                }
+                .padding()
+            }
         }
-        .padding()
-    }
-}
+        .tabViewStyle(PageTabViewStyle()) // Activa el swipe tipo páginas
+    }}
 
 /// Preview para el Canvas
 #Preview {
