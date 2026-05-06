@@ -19,7 +19,7 @@ let lugares: [LugarTuristico] = [
     // Lugar turístico: Machu Picchu
     LugarTuristico(
         nombre: "Machu Picchu",          // Nombre del lugar
-        pais: "Perú",                    // País
+        pais: "Perú - Sur America",                    // País
         imagen: "machupicchu",          // Nombre de la imagen en Assets
         latitud: -13.1631,               // Coordenada de latitud
         longitud: -72.5450               // Coordenada de longitud
