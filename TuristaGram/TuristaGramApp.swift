@@ -1,15 +1,14 @@
 //
 //  TuristaGramApp.swift
-//  TuristaGram
+//  TuristaGram_Adaptativo
 //
-//  Created by user286595 on 4/29/26.
-//
+//  Created by user286595 on 5/5/26.
 //
 // Diana Luna
 // Diplomado de Diseño y Programación de Apps
 // ING2450 - Programación de Apps para IOS - (A73)
-// 29/04/2026
-// App TuristaGram
+// 10/05/2026
+// App TuristaGram_Adaptativo
 
 import SwiftUI
 
