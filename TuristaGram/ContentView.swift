@@ -64,6 +64,8 @@ struct ContentView: View {
         // Contenedor adaptativo para iPhone y iPad
         GeometryReader { geometry in
             
+            let isIpad = geometry.size.width > 700
+            
             // Contenedor vertical principal con separación adaptable
             //entre secciones
             
@@ -110,6 +112,8 @@ struct ContentView: View {
                     /// Recorremos cada lugar turístico
                     ForEach(lugares) { lugar in
                         
+                        // Contenedor principal respetando Safe Areas para evitar superposición con notch y bordes del sistema
+                        
                         VStack {
                             
                             // Imagen adaptable según tamaño de pantalla
@@ -117,8 +121,8 @@ struct ContentView: View {
                                 .resizable()
                                 //.scaledToFit()
                                 .frame(
-                                    maxWidth: geometry.size.width * 0.88,
-                                    maxHeight: geometry.size.height * 0.29
+                                    maxWidth: isIpad ? geometry.size.width * 0.6 : geometry.size.width * 0.85,
+                                    maxHeight: isIpad ? geometry.size.height * 0.4 : geometry.size.height * 0.30
                                 )
                             
                             
@@ -126,20 +130,20 @@ struct ContentView: View {
                             
                             // Nombre
                             Text(lugar.nombre)
-                                .font(.title)
+                                .font(isIpad ? .largeTitle : .largeTitle)
                                 .bold()
                             
                             // País
                             Text(lugar.pais)
-                                .foregroundColor(.gray)
+                                .font(isIpad ? .largeTitle : .body)
                             
                             // Botón para abrir la galería de imágenes
                             PhotosPicker(selection: $selectedItem, matching: .images) {
                                 
                                 Label("Galería", systemImage: "photo.fill")
-                                    .font(.headline)
-                                    .frame(maxWidth: 150)
-                                    .padding(14)
+                                    .font(.largeTitle)
+                                    .frame(maxWidth: isIpad ? 250 : 150)
+                                    .padding(24)
                                     .background(
                                         RoundedRectangle(cornerRadius: 15)
                                             .fill(Color.blue.opacity(0.2))
@@ -155,9 +159,9 @@ struct ContentView: View {
                             }) {
                                 
                                 Label("Mapa", systemImage: "map.fill")
-                                    .font(.headline)
-                                    .frame(maxWidth: 150)
-                                    .padding(14)
+                                    .font(.largeTitle)
+                                    .frame(maxWidth: isIpad ? 250 : 150)
+                                    .padding(24)
                                     .background(
                                         RoundedRectangle(cornerRadius: 15)
                                             .fill(Color.green.opacity(0.2))
@@ -166,14 +170,16 @@ struct ContentView: View {
                             .padding(.horizontal)
                             
                             // Área interactiva de satisfacción del usuario
-                            VStack(spacing: 18) {
+                            //con emojis
+                            
+                            VStack(spacing: isIpad ? 38 : 28) {
                                 
                                 // Título de la sección
                                 Text("¿Cómo calificas este destino?")
-                                    .font(.headline)
+                                    .font(.largeTitle)
                                 
                                 // Contenedor horizontal de emojis
-                                HStack(spacing: 25) {
+                                HStack(spacing: 55) {
                                     
                                     // Emojis interactivos
                                     ForEach([
@@ -193,7 +199,7 @@ struct ContentView: View {
                                                 
                                                 // Emoji principal
                                                 Image(systemName: emoji)
-                                                    .font(.system(size: 24))
+                                                    .font(.system(size: isIpad ? 40 : 28))
                                                 
                                                 // Indicador visual
                                                 Image(
@@ -208,16 +214,17 @@ struct ContentView: View {
                                         }
                                     }
                                 }
-                                .padding(18)
+                                .padding(28)
                                 .background(
-                                    RoundedRectangle(cornerRadius: 18)
+                                    RoundedRectangle(cornerRadius: 23)
                                         .fill(Color.blue.opacity(0.13))
                                 )
                             }
                             .padding(.top, 4)
+                            .padding(.bottom)
                         }
+                        .padding(.horizontal)
                         
-                      
                         // Espaciado inferior para evitar superposición con PageControl
                         .padding(.horizontal)
                         .padding(.top)
