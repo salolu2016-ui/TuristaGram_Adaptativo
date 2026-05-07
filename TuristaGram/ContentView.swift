@@ -28,7 +28,7 @@ let lugares: [LugarTuristico] = [
     // Lugar turístico: Galápagos
     LugarTuristico(
         nombre: "Galápagos",
-        pais: "Ecuador",
+        pais: "Ecuador - Sur America",
         imagen: "galapagos",
         latitud: -0.9538,
         longitud: -90.9656
@@ -37,7 +37,7 @@ let lugares: [LugarTuristico] = [
     // Lugar turístico: Bariloche
     LugarTuristico(
         nombre: "Bariloche",
-        pais: "Argentina",
+        pais: "Argentina - Sur America",
         imagen: "bariloche",
         latitud: -41.1335,
         longitud: -71.3103
