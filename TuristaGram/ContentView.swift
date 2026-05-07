@@ -11,21 +11,20 @@
 // App TuristaGram_Adaptativo
 
 import SwiftUI
+import PhotosUI
+import MapKit
 
 /// Arreglo que contiene la lista de lugares turísticos
-/// Este funcionará como el "feed" de la aplicación
 let lugares: [LugarTuristico] = [
     
-    // Lugar turístico: Machu Picchu
     LugarTuristico(
-        nombre: "Machu Picchu",          // Nombre del lugar
-        pais: "Perú - Sur America",                    // País
-        imagen: "machupicchu",          // Nombre de la imagen en Assets
-        latitud: -13.1631,               // Coordenada de latitud
-        longitud: -72.5450               // Coordenada de longitud
+        nombre: "Machu Picchu",
+        pais: "Perú - Sur America",
+        imagen: "machupicchu",
+        latitud: -13.1631,
+        longitud: -72.5450
     ),
     
-    // Lugar turístico: Galápagos
     LugarTuristico(
         nombre: "Galápagos",
         pais: "Ecuador - Sur America",
@@ -34,7 +33,6 @@ let lugares: [LugarTuristico] = [
         longitud: -90.9656
     ),
     
-    // Lugar turístico: Bariloche
     LugarTuristico(
         nombre: "Bariloche",
         pais: "Argentina - Sur America",
@@ -44,61 +42,43 @@ let lugares: [LugarTuristico] = [
     )
 ]
 
-import SwiftUI
-import PhotosUI
-import MapKit
-
 /// Vista principal de la aplicación
 struct ContentView: View {
     
-    // Estado para manejar selección de imagen de galería
+    // Estado para manejar selección de imagen
     @State private var selectedItem: PhotosPickerItem?
     
-    // Estado que almacena el emoji seleccionado por el usuario
-    @State private var selectedEmoji = "😐"
+    // Diccionario para guardar calificaciones por lugar
+    @State private var calificaciones: [String: String] = [:]
     
     var body: some View {
         
-        // GeometryReader permite adaptar dinámicamente la interfaz
-        // según el tamaño y orientación de la pantalla
-        // Contenedor adaptativo para iPhone y iPad
         GeometryReader { geometry in
             
             let isIpad = geometry.size.width > 700
             
-            // Contenedor vertical principal con separación adaptable
-            //entre secciones
-            
             VStack(spacing: 20) {
                 
-                // HEADER PERSONALIZADO
-                ZStack  {
+                // HEADER
+                ZStack {
                     
-                    // Tarjeta visual con bordes redondeados y
-                    //transparencia
                     RoundedRectangle(cornerRadius: 20)
                         .fill(Color.white.opacity(0.15))
                     
-                    // Fondo degradado (estilo cielo)
                     LinearGradient(
                         gradient: Gradient(colors: [Color.blue, Color.cyan]),
                         startPoint: .top,
                         endPoint: .bottom
                     )
                     .frame(height: 120)
-                    
-                    // Bordes redondeados y sombra para mejorar la
-                    //profundidad visual
                     .cornerRadius(20)
                     .shadow(radius: 5)
                     
-                    // Ícono decorativo (avión)
                     Image(systemName: "airplane")
                         .font(.largeTitle)
                         .foregroundColor(.white)
                         .offset(x: 80, y: -20)
                     
-                    // Título de la app
                     Text("TuristaGram")
                         .font(.largeTitle)
                         .bold()
@@ -106,26 +86,20 @@ struct ContentView: View {
                 }
                 .padding()
                 
-                /// Swipe entre lugares (tipo Instagram)
+                // SWIPE ENTRE LUGARES
                 TabView {
                     
-                    /// Recorremos cada lugar turístico
                     ForEach(lugares) { lugar in
-                        
-                        // Contenedor principal respetando Safe Areas para evitar superposición con notch y bordes del sistema
                         
                         VStack {
                             
-                            // Imagen adaptable según tamaño de pantalla
+                            // Imagen
                             Image(lugar.imagen)
                                 .resizable()
-                                //.scaledToFit()
                                 .frame(
-                                    maxWidth: isIpad ? geometry.size.width * 0.6 : geometry.size.width * 0.85,
-                                    maxHeight: isIpad ? geometry.size.height * 0.4 : geometry.size.height * 0.30
+                                    maxWidth: isIpad ? geometry.size.width * 0.6 : geometry.size.width * 0.95,
+                                    maxHeight: isIpad ? geometry.size.height * 0.4 : geometry.size.height * 0.80
                                 )
-                            
-                            
                                 .cornerRadius(15)
                             
                             // Nombre
@@ -137,13 +111,13 @@ struct ContentView: View {
                             Text(lugar.pais)
                                 .font(isIpad ? .largeTitle : .body)
                             
-                            // Botón para abrir la galería de imágenes
+                            // BOTÓN GALERÍA
                             PhotosPicker(selection: $selectedItem, matching: .images) {
                                 
                                 Label("Galería", systemImage: "photo.fill")
-                                    .font(.largeTitle)
+                                    .font(.system(size: 24))
                                     .frame(maxWidth: isIpad ? 250 : 150)
-                                    .padding(24)
+                                    .padding(20)
                                     .background(
                                         RoundedRectangle(cornerRadius: 15)
                                             .fill(Color.blue.opacity(0.2))
@@ -151,7 +125,7 @@ struct ContentView: View {
                             }
                             .padding(.horizontal)
                             
-                            // Botón para abrir la ubicación en Apple Maps
+                            // BOTÓN MAPA
                             Button(action: {
                                 
                                 abrirMapa(lat: lugar.latitud, lon: lugar.longitud)
@@ -159,9 +133,9 @@ struct ContentView: View {
                             }) {
                                 
                                 Label("Mapa", systemImage: "map.fill")
-                                    .font(.largeTitle)
+                                    .font(.system(size: 24))
                                     .frame(maxWidth: isIpad ? 250 : 150)
-                                    .padding(24)
+                                    .padding(20)
                                     .background(
                                         RoundedRectangle(cornerRadius: 15)
                                             .fill(Color.green.opacity(0.2))
@@ -169,42 +143,36 @@ struct ContentView: View {
                             }
                             .padding(.horizontal)
                             
-                            // Área interactiva de satisfacción del usuario
-                            //con emojis
-                            
-                            VStack(spacing: isIpad ? 38 : 28) {
+                            // CALIFICACIÓN
+                            VStack(spacing: isIpad ? 48 : 18) {
                                 
-                                // Título de la sección
                                 Text("¿Cómo calificas este destino?")
-                                    .font(.largeTitle)
+                                    .font(.system(size: 24))
                                 
-                                // Contenedor horizontal de emojis
-                                HStack(spacing: 55) {
+                                HStack(spacing: 40) {
                                     
-                                    // Emojis interactivos
                                     ForEach([
                                         "hand.thumbsup.fill",
                                         "hand.thumbsdown.fill"
-                   
-                                    ], id: \.self)  { emoji in
+                                    ], id: \.self) { emoji in
                                         
                                         Button {
                                             
-                                            // Guarda emoji seleccionado
-                                            selectedEmoji = emoji
+                                            // Guardar calificación del lugar actual
+                                            calificaciones[lugar.nombre] = emoji
                                             
                                         } label: {
                                             
                                             VStack {
                                                 
-                                                // Emoji principal
+                                                // Emoji
                                                 Image(systemName: emoji)
-                                                    .font(.system(size: isIpad ? 40 : 28))
+                                                    .font(.system(size: isIpad ? 50 : 26))
                                                 
                                                 // Indicador visual
                                                 Image(
                                                     systemName:
-                                                        selectedEmoji == emoji
+                                                        calificaciones[lugar.nombre] == emoji
                                                     ? "circle.fill"
                                                     : "circle"
                                                 )
@@ -214,51 +182,42 @@ struct ContentView: View {
                                         }
                                     }
                                 }
-                                .padding(28)
+                                .padding(23)
                                 .background(
                                     RoundedRectangle(cornerRadius: 23)
-                                        .fill(Color.blue.opacity(0.13))
+                                        .fill(Color.cyan.opacity(0.19))
                                 )
                             }
-                            .padding(.top, 4)
+                            .padding(.top, 2)
                             .padding(.bottom)
                         }
                         .padding(.horizontal)
-                        
-                        // Espaciado inferior para evitar superposición con PageControl
-                        .padding(.horizontal)
                         .padding(.top)
                         .padding(.bottom, 5)
-                        
                     }
                 }
-                
-                .frame(height: geometry.size.height * 0.83)
+                .frame(height: geometry.size.height * 0.82)
                 .tabViewStyle(PageTabViewStyle())
             }
-            
-            
-            
         }
     }
 }
 
-/// Función para abrir Apple Maps (forma correcta y compatible)
+/// Función para abrir Apple Maps
 func abrirMapa(lat: Double, lon: Double) {
     
-    // Coordenadas del lugar
     let coordinate = CLLocationCoordinate2D(latitude: lat, longitude: lon)
     
-    // Crear directamente el mapItem con placemark
-    let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+    let mapItem = MKMapItem(
+        placemark: MKPlacemark(coordinate: coordinate)
+    )
     
     mapItem.name = "Ubicación turística"
     
-    // Abrir en Apple Maps
     mapItem.openInMaps()
 }
 
-/// Preview para el Canvas
+/// Preview
 #Preview {
     ContentView()
 }
