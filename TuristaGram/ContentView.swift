@@ -98,7 +98,7 @@ struct ContentView: View {
                                 .resizable()
                                 .frame(
                                     maxWidth: isIpad ? geometry.size.width * 0.6 : geometry.size.width * 0.95,
-                                    maxHeight: isIpad ? geometry.size.height * 0.4 : geometry.size.height * 0.80
+                                    maxHeight: isIpad ? geometry.size.height * 0.37 : geometry.size.height * 0.80
                                 )
                                 .cornerRadius(15)
                             
